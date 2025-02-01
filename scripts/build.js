@@ -15,7 +15,7 @@ if (!fs.existsSync(outputDir)) {
 // Get the next test number
 const getNextTestNumber = () => {
     const files = fs.readdirSync(outputDir);
-    const regex = new RegExp(`TEMPLATENAME_${version}-test-(\\d+)\\.zip`);
+    const regex = new RegExp(`darkermode_${version}-test-(\\d+)\\.zip`);
 
     let maxTestNumber = 0;
     for (const file of files) {
@@ -31,7 +31,7 @@ const getNextTestNumber = () => {
 };
 
 const testNumber = getNextTestNumber();
-const zipFileName = `TEMPLATENAME_${version}-test-${testNumber}.zip`;
+const zipFileName = `darkermode_${version}-test-${testNumber}.zip`;
 const outputFilePath = path.join(outputDir, zipFileName);
 
 const output = fs.createWriteStream(outputFilePath);

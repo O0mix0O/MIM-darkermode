@@ -1,5 +1,5 @@
 {
-    "namespace": "TEMPLATENAME",
+    "namespace": "darkermode",
     "setup": "setup.mjs",
     "load": ["style.css"]
   }
