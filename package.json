@@ -9,7 +9,9 @@
     "build": "node scripts/build.js",
     "clean": "node scripts/cleanDist.js",
     "publish": "npm run clean && node scripts/publish.js",
-    "mix": "node scripts/mix.js"
+    "extract": "node scripts/removeAllCSSPropsExcept.js",
+    "darken": "node scripts/darkenAllColoursByPercent.js",
+    "lightenText": "node scripts/lightenText.js"
   },
   "eslintConfig": {
     "extends": [
