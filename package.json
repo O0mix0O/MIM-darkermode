@@ -1,0 +1,19 @@
+{
+  "name": "TEMPLATENAME",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "archiver": "^7.0.1"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "clean": "node scripts/cleanDist.js",
+    "publish": "npm run clean && node scripts/publish.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  }
+}

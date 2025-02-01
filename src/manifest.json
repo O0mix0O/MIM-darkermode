@@ -1,0 +1,5 @@
+{
+    "namespace": "TEMPLATENAME",
+    "setup": "setup.mjs",
+    "load": ["style.css"]
+  }
