@@ -1,5 +1,5 @@
 {
-    "namespace": "darkermode",
+    "namespace": "muteddarkmode",
     "setup": "setup.mjs",
     "load": ["style.css"]
   }

@@ -1,75 +1,72 @@
 const fs = require('fs');
 const path = require('path');
 
-// Function to lighten color
+// Function to lighten a color
 function lightenColor(color, percentage) {
-    // Remove the hash if it exists
     if (color[0] === '#') {
         color = color.slice(1);
     }
 
-    // Check if the color is valid
+    // Ensure it's a valid hex code
     if (!/^([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/.test(color)) {
-        return color; // Return the original color if it's invalid
+        return color;
     }
 
-    // Convert to RGB
+    // Convert hex to RGB
     let r = parseInt(color.substring(0, 2), 16);
     let g = parseInt(color.substring(2, 4), 16);
     let b = parseInt(color.substring(4, 6), 16);
 
-    // Increase the color values based on the percentage
+    // Increase brightness
     r = Math.min(255, Math.round(r + (255 - r) * percentage));
     g = Math.min(255, Math.round(g + (255 - g) * percentage));
     b = Math.min(255, Math.round(b + (255 - b) * percentage));
 
-    // Convert back to hex and return
+    // Convert back to hex
     return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase()}`;
 }
 
-// Function to modify the colors in the CSS content
-function lightenCSSColors(cssContent, percentage) {
-    const colorRegex = /(?:color|background-color|border-color|outline-color|box-shadow|text-shadow|column-rule-color|caret-color|fill)\s*:\s*(#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}|rgba?\([^\)]+\))/g;
+// Function to modify only `color` property inside `.btn` or `.text` classes
+function modifyOnlyColorProperty(cssContent, percentage) {
+    const ruleRegex = /([^{]+)\s*\{([^}]+)\}/g; // Matches CSS rule blocks
 
-    return cssContent.replace(colorRegex, (match, colorValue) => {
-        if (colorValue[0] === '#') {
-            const newColor = lightenColor(colorValue, percentage);
-            return match.replace(colorValue, newColor);
+    return cssContent.replace(ruleRegex, (match, selector, properties) => {
+        if (/\b(btn|text|badge)\b/.test(selector)) { // Only match selectors with .btn or .text
+            const colorRegex = /(\s|^)color\s*:\s*(#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3})(;|$)/g;
+
+            // Modify ONLY the 'color' property
+            properties = properties.replace(colorRegex, (colorMatch, whitespace, colorValue, semicolon) => {
+                const newColor = lightenColor(colorValue, percentage);
+                return `${whitespace}color: ${newColor}${semicolon}`;
+            });
         }
-        return match; // For non-hex colors, leave them as-is
+        return `${selector} {${properties}}`; // Return the modified rule
     });
 }
 
-// Function to load the CSS file, modify it, and write to a new file
-function loadAndModifyCSS(filePath, percentage) {
+
+// Function to load, modify, and save CSS
+function processCSS(filePath, percentage) {
     try {
         console.log('Reading CSS file:', filePath);
-        // Read the CSS file content
         const cssContent = fs.readFileSync(filePath, 'utf8');
-
         console.log('Original CSS content loaded.');
 
-        // Lighten the colors in the CSS content
-        const modifiedCSS = lightenCSSColors(cssContent, percentage);
+        const modifiedCSS = modifyOnlyColorProperty(cssContent, percentage);
 
-        // Check if any changes were made
         if (modifiedCSS === cssContent) {
             console.log('No changes detected in CSS content.');
         } else {
-            // Define a new file path (you can adjust this as needed)
             const newFilePath = path.join(path.dirname(filePath), 'modified_styles.css');
-
-            console.log('Changes detected, writing modified content to:', newFilePath);
-            // Write the modified CSS content to a new file
+            console.log('Writing modified content to:', newFilePath);
             fs.writeFileSync(newFilePath, modifiedCSS, 'utf8');
-            console.log('CSS modifications have been written to the new file:', newFilePath);
+            console.log('CSS modifications saved.');
         }
-
     } catch (error) {
-        console.error('Error loading or modifying CSS file:', error);
+        console.error('Error modifying CSS:', error);
     }
 }
 
-// Example usage: Pass the path to your CSS file and the percentage for color lightening
-const cssFilePath = path.join(__dirname, 'styles.css'); // Make sure styles.css is in the same directory
-loadAndModifyCSS(cssFilePath, 0.25); // Increase color brightness by 25%
+// Run script on styles.css
+const cssFilePath = path.join(__dirname, 'styles.css');
+processCSS(cssFilePath, 0.75); // Lighten colors by 25%

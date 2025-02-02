@@ -12,7 +12,7 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true }); // Create dist/ if it doesn't exist
 }
 
-const zipFileName = `darkermode_${version}.zip`;
+const zipFileName = `muteddarkmode_${version}.zip`;
 const outputFilePath = path.join(outputDir, zipFileName);
 
 const output = fs.createWriteStream(outputFilePath);
